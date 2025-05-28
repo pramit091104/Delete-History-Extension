@@ -19,12 +19,72 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
+    // Initialize time slider and labels
+    initTimeSlider();
+    
     // Add click event listener to the clear button
     clearBtn.addEventListener('click', handleClearClick);
     
+    // Initialize the time slider functionality
+    function initTimeSlider() {
+        const timeDisplay = document.getElementById('timeDisplay');
+        const sliderLabels = document.querySelectorAll('#section-clear-history .slider-label');
+        
+        // Set initial active label
+        updateActiveLabel(timeSelect.value);
+        
+        // Update display and active label when slider changes
+        timeSelect.addEventListener('input', function() {
+            updateActiveLabel(this.value);
+            updateTimeDisplay(this.value, timeDisplay);
+        });
+        
+        // Make labels clickable
+        sliderLabels.forEach(label => {
+            label.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                timeSelect.value = value;
+                updateActiveLabel(value);
+                updateTimeDisplay(value, timeDisplay);
+            });
+        });
+        
+        // Set initial time display
+        updateTimeDisplay(timeSelect.value, timeDisplay);
+    }
+    
+    // Update which label is active based on slider value
+    function updateActiveLabel(value) {
+        const sliderLabels = document.querySelectorAll('#section-clear-history .slider-label');
+        sliderLabels.forEach(label => {
+            if (label.getAttribute('data-value') === value) {
+                label.classList.add('active');
+            } else {
+                label.classList.remove('active');
+            }
+        });
+    }
+    
+    // Update the time display text
+    function updateTimeDisplay(value, displayElement) {
+        const labels = {
+            '1': 'Last 1 hour',
+            '2': 'Last 24 hours',
+            '3': 'Last 7 days',
+            '4': 'Last 4 weeks',
+            '5': 'All time'
+        };
+        
+        if (displayElement) {
+            displayElement.textContent = labels[value] || 'Select time range';
+        }
+    }
+    
     // Handle clear button click
     async function handleClearClick() {
-        const interval = parseInt(timeSelect.value, 10);
+        // Get the data-time attribute from the active label
+        const activeLabel = document.querySelector('#section-clear-history .slider-label.active');
+        const interval = activeLabel ? parseInt(activeLabel.getAttribute('data-time'), 10) : 86400000;
         
         if (isNaN(interval)) {
             showAlert('Please select a valid time range', 'error');

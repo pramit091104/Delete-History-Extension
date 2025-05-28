@@ -374,6 +374,95 @@
             color: var(--text-light);
             text-align: center;
         }
+        /* Slider styles */
+        .slider-container {
+            width: 100%;
+            margin: 15px 0;
+            position: relative;
+        }
+        
+        .time-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            margin: 15px 0;
+        }
+        
+        .time-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        
+        .time-slider::-webkit-slider-thumb:hover {
+            background: var(--primary-hover);
+        }
+        
+        .time-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: none;
+            transition: background 0.15s ease;
+        }
+        
+        .time-slider::-moz-range-thumb:hover {
+            background: var(--primary-hover);
+        }
+        
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            padding: 0 2px;
+        }
+        
+        .slider-label {
+            font-size: 12px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: color 0.15s ease;
+        }
+        
+        .slider-label.active {
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .time-display {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+        
+        /* Dark mode slider styles */
+        body.dark-mode .time-slider {
+            background: #4b5563;
+        }
+        
+        body.dark-mode .slider-label {
+            color: var(--dark-text-light);
+        }
+        
+        body.dark-mode .slider-label.active {
+            color: var(--primary);
+        }
+        
+        body.dark-mode .time-display {
+            color: var(--primary);
+        }
     </style>
 </head>
 
@@ -398,13 +487,17 @@
     <p class="description">Select a time range to clear your browsing history</p>
     <div class="form-group">
       <label for="timeSelect">Time Range</label>
-      <select id="timeSelect">
-        <option value="3600000">Last 1 hour</option>
-        <option value="86400000" selected>Last 24 hours</option>
-        <option value="604800000">Last 7 days</option>
-        <option value="2419200000">Last 4 weeks</option>
-        <option value="0">All time</option>
-      </select>
+      <div class="slider-container">
+        <input type="range" id="timeSelect" min="1" max="5" step="1" value="2" class="time-slider">
+        <div class="slider-labels">
+          <span class="slider-label" data-value="1" data-time="3600000">1h</span>
+          <span class="slider-label" data-value="2" data-time="86400000">24h</span>
+          <span class="slider-label" data-value="3" data-time="604800000">7d</span>
+          <span class="slider-label" data-value="4" data-time="2419200000">4w</span>
+          <span class="slider-label" data-value="5" data-time="0">All</span>
+        </div>
+        <div id="timeDisplay" class="time-display">Last 24 hours</div>
+      </div>
     </div>
     <button id="clearBtn">
       <span class="btn-text">Clear History</span>
@@ -419,13 +512,17 @@
             <label for="site-input" class="section-label">Domain</label>
             <input type="text" id="site-input" placeholder="e.g. example.com" class="input-field">
             <label for="site-time-range" class="section-label" style="margin-top:2px;">Time Range</label>
-            <select id="site-time-range" class="input-field">
-                <option value="3600000">Last hour</option>
-                <option value="86400000">Last 24 hours</option>
-                <option value="604800000">Last 7 days</option>
-                <option value="2592000000">Last 30 days</option>
-                <option value="0">All time</option>
-            </select>
+            <div class="slider-container">
+                <input type="range" id="site-time-range" min="1" max="5" step="1" value="2" class="time-slider">
+                <div class="slider-labels">
+                    <span class="slider-label" data-value="1" data-time="3600000">1h</span>
+                    <span class="slider-label" data-value="2" data-time="86400000">24h</span>
+                    <span class="slider-label" data-value="3" data-time="604800000">7d</span>
+                    <span class="slider-label" data-value="4" data-time="2592000000">30d</span>
+                    <span class="slider-label" data-value="5" data-time="0">All</span>
+                </div>
+                <div id="siteTimeDisplay" class="time-display">Last 24 hours</div>
+            </div>
             <div class="checkbox-row">
                 <input type="checkbox" id="backup-before-delete" />
                 <label for="backup-before-delete" class="checkbox-label">Backup before deleting</label>

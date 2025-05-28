@@ -2,6 +2,63 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     const clearSiteBtn = document.getElementById('clear-site-btn');
+    const siteTimeRange = document.getElementById('site-time-range');
+    
+    // Initialize site time slider
+    initSiteTimeSlider();
+    
+    function initSiteTimeSlider() {
+        const siteTimeDisplay = document.getElementById('siteTimeDisplay');
+        const sliderLabels = document.querySelectorAll('#section-clear-site-history .slider-label');
+        
+        // Set initial active label
+        updateSiteActiveLabel(siteTimeRange.value);
+        
+        // Update display and active label when slider changes
+        siteTimeRange.addEventListener('input', function() {
+            updateSiteActiveLabel(this.value);
+            updateSiteTimeDisplay(this.value, siteTimeDisplay);
+        });
+        
+        // Make labels clickable
+        sliderLabels.forEach(label => {
+            label.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                siteTimeRange.value = value;
+                updateSiteActiveLabel(value);
+                updateSiteTimeDisplay(value, siteTimeDisplay);
+            });
+        });
+        
+        // Set initial time display
+        updateSiteTimeDisplay(siteTimeRange.value, siteTimeDisplay);
+    }
+    
+    function updateSiteActiveLabel(value) {
+        const sliderLabels = document.querySelectorAll('#section-clear-site-history .slider-label');
+        sliderLabels.forEach(label => {
+            if (label.getAttribute('data-value') === value) {
+                label.classList.add('active');
+            } else {
+                label.classList.remove('active');
+            }
+        });
+    }
+    
+    function updateSiteTimeDisplay(value, displayElement) {
+        const labels = {
+            '1': 'Last 1 hour',
+            '2': 'Last 24 hours',
+            '3': 'Last 7 days',
+            '4': 'Last 30 days',
+            '5': 'All time'
+        };
+        
+        if (displayElement) {
+            displayElement.textContent = labels[value] || 'Select time range';
+        }
+    }
+    
     if (clearSiteBtn) {
         clearSiteBtn.addEventListener('click', function() {
             const domain = document.getElementById('site-input').value.trim();
@@ -12,7 +69,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             // Confirmation dialog
-            const interval = parseInt(document.getElementById('site-time-range').value, 10);
+            // Get the data-time attribute from the active label
+            const activeLabel = document.querySelector('#section-clear-site-history .slider-label.active');
+            const interval = activeLabel ? parseInt(activeLabel.getAttribute('data-time'), 10) : 86400000;
             let confirmMsg = `Are you sure you want to clear history for '${domain}'`;
             if (interval > 0) {
                 const days = Math.round(interval / 86400000);
